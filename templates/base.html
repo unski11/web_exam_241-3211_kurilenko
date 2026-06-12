@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Электронная библиотека{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="{{ url_for('index') }}">Электронная библиотека</a>
+    <nav class="nav">
+      <a href="{{ url_for('index') }}">Книги</a>
+      {% if current_user.is_authenticated and current_user.has_role('пользователь') %}
+        <a href="{{ url_for('my_reviews') }}">Мои рецензии</a>
+      {% endif %}
+      {% if current_user.is_authenticated and current_user.has_role('модератор') %}
+        <a href="{{ url_for('moderation_reviews') }}">Модерация рецензий</a>
+      {% endif %}
+    </nav>
+    <div class="account">
+      {% if current_user.is_authenticated %}
+        <span>{{ current_user.full_name }}</span>
+        <a class="button ghost" href="{{ url_for('logout') }}">Выйти</a>
+      {% else %}
+        <a class="button" href="{{ url_for('login') }}">Войти</a>
+      {% endif %}
+    </div>
+  </header>
+
+  <main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <section class="flash-stack">
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </section>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">241-3211 · Куриленко Владислав Павлович</footer>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

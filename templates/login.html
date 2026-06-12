@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="auth-panel">
+  <h1>Вход</h1>
+  <form method="post">
+    <label>
+      Логин
+      <input name="login" required autofocus>
+    </label>
+    <label>
+      Пароль
+      <input name="password" type="password" required>
+    </label>
+    <label class="checkbox">
+      <input name="remember" type="checkbox">
+      Запомнить меня
+    </label>
+    <button class="button" type="submit">Войти</button>
+  </form>
+</section>
+{% endblock %}

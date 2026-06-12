@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Книги · Электронная библиотека{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div>
+    <h1>Книги</h1>
+    <p>Реестр книг отсортирован по году выхода: сначала новые издания.</p>
+  </div>
+  {% if current_user.is_authenticated and current_user.has_role('администратор') %}
+    <a class="button" href="{{ url_for('book_create') }}">Добавить книгу</a>
+  {% endif %}
+</section>
+
+<section class="table-card">
+  <table>
+    <thead>
+      <tr>
+        <th>Название</th>
+        <th>Жанры</th>
+        <th>Год</th>
+        <th>Средняя оценка</th>
+        <th>Рецензии</th>
+        <th>Действия</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for book in pagination.items %}
+        <tr>
+          <td>{{ book.title }}</td>
+          <td>{{ book.genres|map(attribute='name')|join(', ') }}</td>
+          <td>{{ book.year }}</td>
+          <td>{{ book.average_rating if book.average_rating is not none else '—' }}</td>
+          <td>{{ book.approved_reviews|length }}</td>
+          <td class="actions">
+            <a class="button small ghost" href="{{ url_for('book_detail', book_id=book.id) }}">Просмотр</a>
+            {% if current_user.is_authenticated and current_user.has_role('администратор', 'модератор') %}
+              <a class="button small ghost" href="{{ url_for('book_edit', book_id=book.id) }}">Редактирование</a>
+            {% endif %}
+            {% if current_user.is_authenticated and current_user.has_role('администратор') %}
+              <button class="button small danger" type="button" data-modal-open="delete-{{ book.id }}">Удалить</button>
+              <dialog id="delete-{{ book.id }}">
+                <form method="post" action="{{ url_for('book_delete', book_id=book.id) }}">
+                  <h2>Удаление книги</h2>
+                  <p>Вы уверены, что хотите удалить книгу {{ book.title }}?</p>
+                  <div class="dialog-actions">
+                    <button class="button danger" type="submit">Да</button>
+                    <button class="button ghost" type="button" data-modal-close>Нет</button>
+                  </div>
+                </form>
+              </dialog>
+            {% endif %}
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="6">Книги пока не добавлены.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+{% if pagination.pages > 1 %}
+  <nav class="pagination">
+    {% if pagination.has_prev %}<a href="{{ url_for('index', page=pagination.prev_num) }}">Назад</a>{% endif %}
+    <span>Страница {{ pagination.page }} из {{ pagination.pages }}</span>
+    {% if pagination.has_next %}<a href="{{ url_for('index', page=pagination.next_num) }}">Вперёд</a>{% endif %}
+  </nav>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="page-head">
+  <div>
+    <h1>Мои рецензии</h1>
+    <p>Все ваши рецензии с текущим статусом рассмотрения.</p>
+  </div>
+</section>
+<section class="table-card">
+  <table>
+    <thead><tr><th>Книга</th><th>Статус</th><th>Оценка</th><th>Текст</th></tr></thead>
+    <tbody>
+      {% for review in reviews %}
+        <tr>
+          <td><a href="{{ url_for('book_detail', book_id=review.book.id) }}">{{ review.book.title }}</a></td>
+          <td>{{ review.status.name }}</td>
+          <td>{{ review.rating }}</td>
+          <td><div class="markdown-body">{{ review.text|markdown|safe }}</div></td>
+        </tr>
+      {% else %}
+        <tr><td colspan="4">Вы ещё не оставляли рецензии.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

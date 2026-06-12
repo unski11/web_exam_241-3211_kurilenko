@@ -1,0 +1,43 @@
+{% macro book_fields(book, genres, is_edit) %}
+  <label>
+    Название
+    <input name="title" required value="{{ request.form.get('title', book.title if book else '') }}">
+  </label>
+  <label>
+    Краткое описание
+    <textarea class="markdown-editor" name="short_description" required>{{ request.form.get('short_description', book.short_description if book else '') }}</textarea>
+  </label>
+  <div class="form-grid">
+    <label>
+      Год
+      <input name="year" type="number" min="1" max="2026" required value="{{ request.form.get('year', book.year if book else '') }}">
+    </label>
+    <label>
+      Объём, страниц
+      <input name="page_count" type="number" min="1" required value="{{ request.form.get('page_count', book.page_count if book else '') }}">
+    </label>
+  </div>
+  <label>
+    Издательство
+    <input name="publisher" required value="{{ request.form.get('publisher', book.publisher if book else '') }}">
+  </label>
+  <label>
+    Автор
+    <input name="author" required value="{{ request.form.get('author', book.author if book else '') }}">
+  </label>
+  <label>
+    Жанры
+    {% set chosen = request.form.getlist('genres') or (book.genres|map(attribute='id')|map('string')|list if book else []) %}
+    <select name="genres" multiple required size="5">
+      {% for genre in genres %}
+        <option value="{{ genre.id }}" {% if genre.id|string in chosen %}selected{% endif %}>{{ genre.name }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  {% if not is_edit %}
+    <label>
+      Обложка
+      <input name="cover" type="file" accept="image/*" required>
+    </label>
+  {% endif %}
+{% endmacro %}

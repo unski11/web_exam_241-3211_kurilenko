@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="review-detail">
+  <h1>Рассмотрение рецензии</h1>
+  <dl>
+    <dt>Книга</dt><dd>{{ review.book.title }}</dd>
+    <dt>Пользователь</dt><dd>{{ review.user.full_name }}</dd>
+    <dt>Дата добавления</dt><dd>{{ review.created_at.strftime('%d.%m.%Y %H:%M') }}</dd>
+    <dt>Оценка</dt><dd>{{ review.rating }}</dd>
+  </dl>
+  <div class="markdown-body">{{ review.text|markdown|safe }}</div>
+  <form class="form-actions" method="post">
+    <button class="button danger" name="action" value="reject" type="submit">Отклонить</button>
+    <button class="button" name="action" value="approve" type="submit">Одобрить</button>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<article class="book-layout">
+  <aside class="cover-panel">
+    {% if book.cover %}
+      <img src="{{ url_for('cover_file', filename=book.cover.filename) }}" alt="Обложка книги {{ book.title }}">
+    {% endif %}
+  </aside>
+  <section class="book-info">
+    <h1>{{ book.title }}</h1>
+    <dl>
+      <dt>Автор</dt><dd>{{ book.author }}</dd>
+      <dt>Год</dt><dd>{{ book.year }}</dd>
+      <dt>Издательство</dt><dd>{{ book.publisher }}</dd>
+      <dt>Объём</dt><dd>{{ book.page_count }} стр.</dd>
+      <dt>Жанры</dt><dd>{{ book.genres|map(attribute='name')|join(', ') }}</dd>
+      <dt>Средняя оценка</dt><dd>{{ book.average_rating if book.average_rating is not none else '—' }}</dd>
+    </dl>
+    <div class="markdown-body">{{ book.short_description|markdown|safe }}</div>
+  </section>
+</article>
+
+<section class="reviews">
+  <div class="section-head">
+    <h2>Рецензии</h2>
+    {% if current_user.is_authenticated and current_user.has_role('администратор', 'модератор', 'пользователь') and not own_review %}
+      <a class="button" href="{{ url_for('review_create', book_id=book.id) }}">Написать рецензию</a>
+    {% endif %}
+  </div>
+
+  {% if own_review %}
+    <div class="review own">
+      <strong>Ваша рецензия: {{ own_review.status.name }}</strong>
+      <p>Оценка: {{ own_review.rating }}</p>
+      <div class="markdown-body">{{ own_review.text|markdown|safe }}</div>
+    </div>
+  {% endif %}
+
+  {% for review in approved_reviews %}
+    <article class="review">
+      <header>
+        <strong>{{ review.user.full_name }}</strong>
+        <span>Оценка: {{ review.rating }}</span>
+      </header>
+      <div class="markdown-body">{{ review.text|markdown|safe }}</div>
+    </article>
+  {% else %}
+    <p class="muted">Одобренных рецензий пока нет.</p>
+  {% endfor %}
+</section>
+{% endblock %}

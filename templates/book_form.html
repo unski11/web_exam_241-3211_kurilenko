@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% from "_book_form.html" import book_fields %}
+{% block head %}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
+{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div>
+    <h1>{{ 'Редактирование книги' if is_edit else 'Добавление книги' }}</h1>
+    <p>{{ 'Обложка не редактируется после создания записи.' if is_edit else 'Заполните данные и загрузите обложку.' }}</p>
+  </div>
+</section>
+<form class="form-panel" method="post" enctype="multipart/form-data">
+  {{ book_fields(book, genres, is_edit) }}
+  <div class="form-actions">
+    <button class="button" type="submit">Сохранить</button>
+    <a class="button ghost" href="{{ url_for('index') }}">Отмена</a>
+  </div>
+</form>
+{% endblock %}
+{% block scripts %}
+  <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
+  <script>document.querySelectorAll('.markdown-editor').forEach((el) => new EasyMDE({ element: el, spellChecker: false }));</script>
+{% endblock %}
