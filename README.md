@@ -27,13 +27,3 @@ python3 -m venv .venv
 ```bash
 .venv/bin/python -m pytest -q
 ```
-
-## Деплой на Render
-
-1. Загрузите проект в GitHub-репозиторий.
-2. На Render создайте `New` -> `Web Service`.
-3. Подключите GitHub-репозиторий с проектом.
-4. Укажите настройки:
-   - Build Command: `pip install -r requirements.txt`
-   - Start Command: `gunicorn app:app`
-5. После деплоя откройте выданную Render ссылку.
